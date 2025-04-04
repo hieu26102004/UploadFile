@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressDialog mProgressDialog;
     public static final int MY_REQUEST_CODE = 100;
     public static final String TAG = MainActivity.class.getName();
+    public static String avatarUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,12 +97,21 @@ public class MainActivity extends AppCompatActivity {
                 mProgressDialog.dismiss();
                 List<ImageUpload> imageUpload = response.body();
                 if (imageUpload.size() > 0) {
-                    for (ImageUpload upload : imageUpload) {
-                        textViewUsername.setText(upload.getUsername());
-                        Glide.with(MainActivity.this)
-                                .load(upload.getAvatar())
-                                .into(imageViewUpload);
+                    for (ImageUpload upload : imageUpload) {// Giả sử chỉ có 1 ảnh
+                        avatarUrl = upload.getAvatar();   // Đường dẫn ảnh
+                        String username = upload.getUsername();
+
+                        Intent intent = new Intent(MainActivity.this, InfoActivity.class);
+                        intent.putExtra("avatarUrl", avatarUrl);
+                        intent.putExtra("username", username);
+                        startActivity(intent);
+                        finish();
                         Toast.makeText(MainActivity.this, "Thành công", Toast.LENGTH_LONG).show();
+//                        textViewUsername.setText(upload.getUsername());
+//                        Glide.with(MainActivity.this)
+//                                .load(upload.getAvatar())
+//                                .into(imageViewUpload);
+
                     }
                 } else {
                     Toast.makeText(MainActivity.this, "Thất bại", Toast.LENGTH_SHORT).show();
@@ -196,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
         editTextUserName = findViewById(R.id.editUserName);
         textViewUsername = findViewById(R.id.tvUsername);
         imageViewChoose = findViewById(R.id.imgChoose);
-    }
+        Glide.with(MainActivity.this).load(avatarUrl).into(imageViewUpload);
 
+    }
 }
